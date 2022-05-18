@@ -1,0 +1,1 @@
+In this repository one can find an example of backup and restore of manually imported managed clusters.

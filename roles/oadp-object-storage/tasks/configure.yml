@@ -1,0 +1,8 @@
+---
+#
+# vars
+#
+
+- name: show me where I am
+  debug:
+    msg: "You're calling oadp-object-storage configure.yml"

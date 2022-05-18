@@ -1,0 +1,11 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  become: false
+  tasks:
+  - include_role:
+      name: ./roles/oadp-operator/tasks/enable.yml
+  - include_role:
+      name: ./roles/oadp-object-storage/tasks/init.yml
+  - include_role:
+       name: ./roles/hub-backup/tasks/enable.yml
