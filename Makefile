@@ -1,21 +1,20 @@
-VIRTUALENV="./ansible2.10"
+VIRTUALENV="./ansible-env"
 PIP=$(VIRTUALENV)/bin/pip3
 ANSIBLE-GALAXY=$(VIRTUALENV)/bin/ansible-galaxy
 ANSIBLE-PLAYBOOK=$(VIRTUALENV)/bin/ansible-playbook
 
-all: venv
+all: ansible-env
 
-venv:
+ansible-env:
 	LC_ALL=en_US.UTF-8 python3 -m venv $(VIRTUALENV)
 	. $(VIRTUALENV)/bin/activate
 	$(VIRTUALENV)/bin/python3 -m pip install --upgrade pip
 	$(PIP) install ansible==2.10
-	$(PIP) install -r requirements-azure.txt
 	$(PIP) install kubernetes
 	$(PIP) install selinux
 	$(ANSIBLE-GALAXY) collection install kubernetes.core
 	${PIP} install pre-commit
 	${PIP} install detect-secrets
 
-clean-venv:
+clean-ansible-env:
 	rm -fr $(VIRTUALENV)

@@ -2,10 +2,13 @@
   connection: local
   gather_facts: no
   become: false
+  vars_files:
+    - vault/aws.yml
+    - vars/vars.yml
   tasks:
   - include_role:
-      name: ./roles/oadp-operator/tasks/enable.yml
-  - include_role:
-      name: ./roles/oadp-object-storage/tasks/init.yml
-  - include_role:
-       name: ./roles/hub-backup/tasks/enable.yml
+      name: ./roles/oadp-operator
+  - name:  Enable oadp object storage
+    include_tasks: ./roles/oadp-object-storage/tasks/main.yml
+  - name: enable Backups
+    include_tasks: ./roles/hub-backup/tasks/enable.yml

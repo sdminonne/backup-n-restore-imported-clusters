@@ -1,0 +1,4 @@
+HUB_CONTEXT: admin
+
+BUCKET: imported-clusters-test-bucket
+STORAGE_REGION: us-east-1

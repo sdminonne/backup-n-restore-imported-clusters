@@ -1,2 +1,5 @@
 kubeconfigs/
 .vscode/
+ansible-env/
+vault/
+.vault-password-file
