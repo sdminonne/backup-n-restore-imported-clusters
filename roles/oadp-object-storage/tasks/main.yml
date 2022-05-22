@@ -1,0 +1,34 @@
+---
+# configure the openshift oadp operator object storage
+
+- name: Create temporary file
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: tempfile_1
+
+- name: generate storage secret
+  template:
+    src: ./roles/oadp-object-storage/tasks/templates/cloud-credentials.j2
+    dest: "{{ tempfile_1.path }}"
+
+
+- name: Create storage secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: cloud-credentials
+        namespace: openshift-adp
+      data:
+        cloud: "{{ lookup('file',  '{{tempfile_1.path}}'  ) | b64encode }}"
+
+
+- name: Create openshift oadp operator
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: "velero.yml"

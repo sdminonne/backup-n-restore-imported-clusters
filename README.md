@@ -29,12 +29,32 @@ $ source ansible-env/bin/activate
 
 ```shell
 (ansible-env)<YOUR_USUAL_PROMPT>$ cat var.yml
-HUB_CTRX: hub-1
+HUB_CONTEXT: admin
+
+BUCKET: imported-clusters-test-bucket
+STORAGE_REGION: us-east-1
 ```
+
+
 
 # Configure backups
 
+```shell
+(ansible-env)<YOUR_USUAL_PROMPT>$  ansible-vault edit vault/aws.yml
+```
 
 ```shell
-(ansible-env)<YOUR_USUAL_PROMPT>$ ansible-playbook enable-backup.yml -e "@var.yml"
+(ansible-env)<YOUR_USUAL_PROMPT>$ echo "YOUR VAULT PASSWORD" > .vault-password-file
+``
+
+```
+(ansible-env)<YOUR_USUAL_PROMPT>$  ansible-vault view vault/aws.yml --vault-password-file .vault-password-fie 
+AWS_ACCESS_KEY: <Your aws acces key>
+AWS_SECRET_ACCESS_KEY: <Your aws secret key here>
+```
+
+
+
+```shell
+(ansible-env)<YOUR_USUAL_PROMPT>$ ansible-playbook enable-backup.yml  --vault-password-file .vault-password-file 
 ```
