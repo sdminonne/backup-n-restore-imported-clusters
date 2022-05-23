@@ -4,11 +4,14 @@
   become: false
   vars_files:
     - vault/aws.yml
-    - vars/vars.yml
+    - vars/vars-s3.yml
+    - vars/vars-backup.yml
   tasks:
   - include_role:
       name: ./roles/oadp-operator
-  - name:  Enable oadp object storage
-    include_tasks: ./roles/oadp-object-storage/tasks/main.yml
+  - include_role:
+      name: ./roles/oadp-object-storage
+  - include_role:
+      name: ./roles/cluster-backup-operator
   - name: enable Backups
     include_tasks: ./roles/hub-backup/tasks/enable.yml

@@ -2,10 +2,17 @@
   connection: local
   gather_facts: no
   become: false
+  vars_files:
+    - vault/aws.yml
+    - vars/vars-s3.yml
+    - vars/vars-restore.yml
   tasks:
   - include_role:
-      name: ./roles/oadp-operator/tasks/enable.yml
+      name: ./roles/oadp-operator
   - include_role:
-      name:  ./roles/oadp-object-storage/tasks/configure.yml
+      name: ./roles/oadp-object-storage
   - include_role:
-      name: ./roles/restore-hub
+      name: ./roles/cluster-backup-operator
+
+  #- include_role:
+  #    name: ./roles/restore-hub

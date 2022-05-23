@@ -1,8 +1,45 @@
 ---
-#
-# vars
-#
 
-- name: show me where I am
-  debug:
-    msg: "You're calling restore-hub main.yml"
+- name: Get Cluster information
+  kubernetes.core.k8s_cluster_info:
+        invalidate_cache: False
+  register: api_status
+
+
+- name: Creating Restore CRD to trigger restoring
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: "restore-hub.yml"
+
+#TODO  detect when restore is over. It's not that bad but but to speed-up the process
+- name: Let's pause 20s to let restore running
+  wait_for:
+    timeout: 20
+
+- name: Get managed clusters
+  kubernetes.core.k8s_info:
+    api_version: cluster.open-cluster-management.io/v1
+    kind: ManagedCluster
+    label_selectors:
+      - velero.io/restore-name #To get only restored clusters
+  register: restored_managedclusters
+
+# Iterate over restored managed clusters and collect their names.  We skip the already Joined ones
+- set_fact: mc_lists="{{ (mc_lists | default([])) + ([ mc_item.metadata.name ])}}"
+  loop: "{{ restored_managedclusters.resources }}"
+  loop_control:
+    loop_var: mc_item
+  when: mc_item.status.conditions is defined  and "ManagedClusterAvailable" not in (mc_item.status.conditions | map(attribute='reason'))
+
+
+- name: re-import Kubernetes cluster
+  include_tasks: ../roles/import-managedcluster-default-invoke/tasks/create.yml
+  vars:
+     AKS_NAME:  "{{ aks_id.split('/')[8] }}"
+     AKS_MRG: "{{ aks_id.split('/')[4] }}"
+     AKS_SUB: "{{ aks_id.split('/')[2] }}"
+  loop: "{{ aks_IDs.splitlines() }}"
+  loop_control:
+    loop_var: aks_id
+  when: ( aks_id.split('/')[8] in {{ mc_lists }} )

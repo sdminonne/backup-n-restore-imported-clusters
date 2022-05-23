@@ -1,4 +1,5 @@
 kubeconfigs/
+*~
 .vscode/
 ansible-env/
 vault/

@@ -15,6 +15,7 @@
 
 - name: Create storage secret
   kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
     state: present
     definition:
       apiVersion: v1
@@ -27,8 +28,9 @@
         cloud: "{{ lookup('file',  '{{tempfile_1.path}}'  ) | b64encode }}"
 
 
-- name: Create openshift oadp operator
+- name: Create Velero resource
   kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
     state: present
     template:
       - path: "velero.yml"

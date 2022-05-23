@@ -18,7 +18,7 @@
     wait_sleep: 5
     wait_timeout: 60
 
-- name: check if deployment is ready
+- name: Check whether deployment is ready
   kubernetes.core.k8s_info:
     context: "{{ HUB_CONTEXT }}"
     kind: Deployment
@@ -31,4 +31,5 @@
       reason: NewReplicaSetAvailable
     wait_sleep: 5
     wait_timeout: 60
+
 

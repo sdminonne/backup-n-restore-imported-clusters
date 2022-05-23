@@ -1,4 +1,4 @@
-HUB_CONTEXT: hub-2
+HUB_CONTEXT: hub-1
 
 BUCKET: imported-clusters-test-bucket
 STORAGE_REGION: us-east-1

@@ -1,0 +1,11 @@
+- name: Enable cluster backup operator
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
+    definition:
+      apiVersion: operator.open-cluster-management.io/v1
+      kind: MultiClusterHub
+      metadata:
+        name: multiclusterhub
+        namespace: open-cluster-management
+      spec:
+        enableClusterBackup: true
