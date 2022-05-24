@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ AKS_NAME }}
+  name: {{ MANAGED_CLUSTER_NAME }}
 spec: {}
 ---
 apiVersion: cluster.open-cluster-management.io/v1
@@ -10,10 +10,9 @@ metadata:
   labels:
     cloud: auto-detect
     cluster.open-cluster-management.io/clusterset: default
-    name: {{ AKS_NAME }}
+    name: {{ MANAGED_CLUSTER_NAME }}
     vendor: auto-detect
-    managed-application: {{ managed_application }}
-  name: {{ AKS_NAME }}
+  name: {{ MANAGED_CLUSTER_NAME }}
 spec:
   hubAcceptsClient: true
   leaseDurationSeconds: 60
@@ -21,8 +20,8 @@ spec:
 apiVersion: agent.open-cluster-management.io/v1
 kind: KlusterletAddonConfig
 metadata:
-  name: {{ AKS_NAME }}
-  namespace: {{ AKS_NAME }}
+  name: {{ MANAGED_CLUSTER_NAME }}
+  namespace: {{ MANAGED_CLUSTER_NAME }}
 spec:
   applicationManager:
     enabled: true
@@ -30,10 +29,10 @@ spec:
     enabled: true
   clusterLabels:
     cloud: auto-detect
-    name: {{ AKS_NAME }}
+    name: {{ MANAGED_CLUSTER_NAME }}
     vendor: auto-detect
-  clusterName: {{ AKS_NAME }}
-  clusterNamespace: {{ AKS_NAME }}
+  clusterName: {{ MANAGED_CLUSTER_NAME }}
+  clusterNamespace: {{ MANAGED_CLUSTER_NAME }}
   iamPolicyController:
     enabled: true
   policyController:

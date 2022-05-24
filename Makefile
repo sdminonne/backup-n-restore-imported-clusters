@@ -12,6 +12,7 @@ ansible-env:
 	$(PIP) install ansible==2.10
 	$(PIP) install kubernetes
 	$(PIP) install selinux
+	$(PIP) install jmespath
 	$(ANSIBLE-GALAXY) collection install kubernetes.core
 	${PIP} install pre-commit
 	${PIP} install detect-secrets

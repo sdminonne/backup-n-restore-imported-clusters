@@ -13,6 +13,5 @@
       name: ./roles/oadp-object-storage
   - include_role:
       name: ./roles/cluster-backup-operator
-
-  #- include_role:
-  #    name: ./roles/restore-hub
+  - include_role:
+      name: ./roles/restore-hub

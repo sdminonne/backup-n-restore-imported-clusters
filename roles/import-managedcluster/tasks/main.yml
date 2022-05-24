@@ -1,0 +1,59 @@
+---
+
+- name: Verify ACM Hub cluster connection
+  kubernetes.core.k8s_cluster_info:
+    context: "{{ HUB_CONTEXT }}"
+    invalidate_cache: False
+  register: api_status
+
+- name: Inject Managed Cluster CR {{ MANAGED_CLUSTER_NAME }}
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
+    state: present
+    template:
+      - path: 'managedcluster.yml'
+
+
+- name: collect secret from {{ MANAGED_CLUSTER_NAME }}
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT}}"
+    api_version: v1
+    kind: Secret
+    name: "{{ MANAGED_CLUSTER_NAME }}-import"
+    namespace: "{{ MANAGED_CLUSTER_NAME }}"
+  register: import_secret
+
+- name: Create crds import 
+  ansible.builtin.tempfile:
+    state: file
+    suffix: crd_import
+  register: crd_import_tmp
+
+- copy:
+    content: "{{  import_secret | json_query('result.data') | json_query('\"crds.yaml\"') | b64decode }}"
+    dest: "{{ crd_import_tmp.path }}"
+
+- name: Create import resources
+  ansible.builtin.tempfile:
+    state: file
+    suffix: import_import
+  register: import_import_tmp
+
+- copy:
+    content: "{{ import_secret | json_query('result.data') | json_query('\"import.yaml\"') | b64decode }}"
+    dest: "{{ import_import_tmp.path }}"
+
+- name: Inject import CRDs into {{ MANAGED_CLUSTER_NAME }}
+  kubernetes.core.k8s:
+    context: "{{ MANAGED_CLUSTER_NAME }}"
+    state: present
+    template:
+      - path: "{{ crd_import_tmp.path }}"
+
+- name: Inject import command into {{ MANAGED_CLUSTER_NAME }}
+  kubernetes.core.k8s:
+    context: "{{ MANAGED_CLUSTER_NAME }}"
+    state: present
+    template:
+      - path: "{{ import_import_tmp.path }}"
+

@@ -8,7 +8,7 @@ Assuming your kubeconfigs stays in `./kubeconfigs` folder
 ```shell
 $ unset KUBECONFIG
 $ for item in $(find kubeconfigs -name kubeconfig); do if [ -z ${KUBECONFIG+x} ]; then export KUBECONFIG=$(pwd)/${item}; else export KUBECONFIG=${KUBECONFIG}:$(pwd)/$item; fi; done
-$ $ kubectl config get-contexts
+$ oc config get-contexts
 CURRENT   NAME                         CLUSTER                      AUTHINFO                                                    NAMESPACE
           dario-managed-1-public-aks   dario-managed-1-public-aks   clusterUser_dario-managed-1-rg_dario-managed-1-public-aks   
           dario-managed-2-public-aks   dario-managed-2-public-aks   clusterUser_dario-managed-2-rg_dario-managed-2-public-aks   
