@@ -1,2 +1,2 @@
-BUCKET: imported-clusters-test-bucket
-STORAGE_REGION: us-east-1
+BUCKET: <BUCKET NAME>
+STORAGE_REGION: <S3 REGION>
