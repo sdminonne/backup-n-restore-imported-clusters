@@ -1,12 +1,16 @@
-In this repository one can find an example of backup and restore of manually imported managed clusters.
-The playbook for enabling backup assumes that the access to the HUB to backup is available while the restore playbook expect that all the managed clusters access is configured. For all cases the `kubeconfig context` is used. A strong assumption for these playbooks for manage clusters only is that the `kubeconfig context` is equal to cluster name. The playbook could be modified in case this is hypothesis is not valid.
+In this repository one can find an example of backup and restore of manually imported managed clusters for RHACM. More specifically there are two playbooks:
+1. `enable-backup.yml` to enable the backups of the HUB
+2. `restore-hub.yml` to restore the HUB configuration in another Openshift cluster.
+
+The playbook for enabling backup assumes that the access to the HUB to backup is available. 
+ Instead the restore playbook expects that the HUB is accessible and all the managed clusters are configured. For both (HUB and managed clusters) the `kubeconfig context` is used, hence the restore playbook launches the command similar to `kubectl --context=<CONTEXT NAME>`. Note that this is a strong assumption for these playbooks for managed clusters only is that the `kubeconfig context` is equal to cluster name. The playbook could be modified in case this is hypothesis is not valid.
 
 
 ## Setup for both backup and restore
 A possible way to have access at the same time to various hub is through the `KUBECONFIG` [environment variables](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#linux-1) and its ability to store multiple paths. 
 Assuming your kubeconfigs stays in `./kubeconfigs/<folder name>/kubeconfig`  one can write a one-liner like this one to access all the clusters in the same folder.
 
-
+```shell
 $ unset KUBECONFIG
 $ for item in $(find kubeconfigs -name kubeconfig); do if [ -z ${KUBECONFIG+x} ]; then export KUBECONFIG=$(pwd)/${item}; else export KUBECONFIG=${KUBECONFIG}:$(pwd)/$item; fi; done
 ```
