@@ -13,7 +13,9 @@ ansible-env:
 	$(PIP) install kubernetes
 	$(PIP) install selinux
 	$(PIP) install jmespath
+	$(PIP) install boto3
 	$(ANSIBLE-GALAXY) collection install kubernetes.core
+	$(ANSIBLE-GALAXY) collection install community.aws
 	${PIP} install pre-commit
 	${PIP} install detect-secrets
 

@@ -1,0 +1,17 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  become: false
+  vars_files:
+    - vault/aws.yml
+    - vars/vars-s3.yml
+    - vars/vars-backup.yml
+  tasks:
+  #- include_role:
+  #    name: ./roles/oadp-operator
+  #- name: configure oadp object storage
+  #  include_tasks: ./roles/oadp-object-storage/tasks/configure_aws_s3.yml
+  - name: create aws s3 if not exists
+    include_tasks: ./roles/oadp-object-storage/tasks/create_aws_s3.yml
+  #- name: configure oadp object storage
+  #  include_tasks: ./roles/oadp-object-storage/tasks/configure_aws_s3.yml
