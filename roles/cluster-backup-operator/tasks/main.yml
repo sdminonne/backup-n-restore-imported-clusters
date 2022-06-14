@@ -9,3 +9,16 @@
         namespace: open-cluster-management
       spec:
         enableClusterBackup: true
+
+#For 2.5.0 we need to do something like this
+#oc get multiclusterhub multiclusterhub -n open-cluster-management -o json | python -c $'import json, sys;\nmch = json.load(sys.stdin);\nfor item in mch["spec"]["overrides"]["components"]:\n  if item["name"]=="cluster-backup": item["enabled"]=True;\nprint(json.dumps(mch))' | oc apply -f -
+
+- name: Get MultiClusterHub
+  kubernetes.core.k8s_info:
+    context: "{{  HUB_CONTEXT }}"
+    apiVersion: operator.open-cluster-management.io/v1
+    kind: MultiClusterHub
+    metadata:
+      name: multiclusterhub
+      namespace: open-cluster-management
+  register: mch

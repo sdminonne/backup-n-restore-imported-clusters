@@ -1,0 +1,9 @@
+- name: Check MCH version
+  kubernetes.core.k8s_info:
+    context: "{{ HUB_CONTEXT }}"
+    api_version: operator.open-cluster-management.io/v1
+    kind: MultiClusterHub
+    namespace: open-cluster-management #TODO check whether namespace is not the default
+  register: multiclusterhubs
+
+- set_fact: MCH_VERSION="{{ multiclusterhubs.resources[0].status.currentVersion }}" # TODO: double check if we can have only one MCH

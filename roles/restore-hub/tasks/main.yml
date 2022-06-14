@@ -7,17 +7,26 @@
   register: api_status
 
 
-- name: Creating Restore CRD to trigger restoring
+- name: Creating Restore CRD to trigger restoring when 2.4.4
   kubernetes.core.k8s:
     context: "{{ HUB_CONTEXT }}"
     state: present
     template:
-      - path: "restore-hub.yml"
+      - path: "restore-hub_2.4.4.yml"
+  when: MCH_VERSION ==  "2.4.4"
 
-#TODO  detect when restore is over. It's not that bad but but to speed-up the process
-- name: Let's pause 20s to let restore running
+- name: Creating Restore CRD to trigger restoring when 2.5.0
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
+    state: present
+    template:
+      - path: "restore-hub_2.5.0.yml"
+  when: MCH_VERSION ==  "2.5.0"
+
+#TODO  detect when restore is over. In general it's faster than 20s. Need to speed-up this.
+- name: Let's pause 59s to let restore running
   wait_for:
-    timeout: 30
+    timeout: 59
 #TODO: replace with a check condition
 
 - name: Get managed clusters

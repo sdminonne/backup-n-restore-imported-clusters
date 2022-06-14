@@ -7,11 +7,16 @@
     - vars/vars-s3.yml
     - vars/vars-restore.yml
   tasks:
+  - name: collect Multi-Cluster-HUB version
+    include_tasks: ./roles/tools/tasks/mch.yml
+  - name: for backup eventually we want create S3
+    set_fact:
+      CREATE_S3_STORAGE: false
   - include_role:
       name: ./roles/oadp-operator
   - include_role:
       name: ./roles/oadp-object-storage
-  - include_role:
-      name: ./roles/cluster-backup-operator
+  #- include_role:
+  #    name: ./roles/cluster-backup-operator
   - include_role:
       name: ./roles/restore-hub

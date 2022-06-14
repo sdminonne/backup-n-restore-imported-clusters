@@ -1,0 +1,33 @@
+---
+
+- name: Create openshift oadp operator
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
+    state: present
+    template:
+      - path: "./roles/oadp-operator/templates/openshift-adp_2.5.0.yml"
+
+- name: Wait for openshift-adp namesapce is active
+  kubernetes.core.k8s_info:
+    context: "{{ HUB_CONTEXT }}"
+    kind: Namespace
+    field_selectors:
+      - status.phase=Active
+    wait: yes
+    name: openshift-adp
+    wait_sleep: 5
+    wait_timeout: 60
+
+- name: Check whether deployment is ready
+  kubernetes.core.k8s_info:
+    context: "{{ HUB_CONTEXT }}"
+    kind: Deployment
+    namespace: openshift-adp
+    name: openshift-adp-controller-manager
+    wait: yes
+    wait_condition:
+      type: Progressing
+      status: "True"
+      reason: NewReplicaSetAvailable
+    wait_sleep: 5
+    wait_timeout: 60
