@@ -9,16 +9,47 @@
         namespace: open-cluster-management
       spec:
         enableClusterBackup: true
-
-#For 2.5.0 we need to do something like this
-#oc get multiclusterhub multiclusterhub -n open-cluster-management -o json | python -c $'import json, sys;\nmch = json.load(sys.stdin);\nfor item in mch["spec"]["overrides"]["components"]:\n  if item["name"]=="cluster-backup": item["enabled"]=True;\nprint(json.dumps(mch))' | oc apply -f -
+  when: MCH_VERSION ==  "2.4.4"
 
 - name: Get MultiClusterHub
   kubernetes.core.k8s_info:
     context: "{{  HUB_CONTEXT }}"
-    apiVersion: operator.open-cluster-management.io/v1
+    api_version: operator.open-cluster-management.io/v1
     kind: MultiClusterHub
-    metadata:
-      name: multiclusterhub
-      namespace: open-cluster-management
+    name: multiclusterhub
+    namespace: open-cluster-management
   register: mch
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$")
+
+- name: get overrides compomenets array
+  set_fact:
+    components : "{{ mch.resources[0] | json_query('spec.overrides.components') }}"
+
+
+- name: Initialize an empty new_components
+  set_fact: 
+    new_components: []
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$")
+
+- name: copy components to new_components setting cluster-backup enabled true
+  set_fact:
+    new_components:  "{{ new_components +  (item.name == 'cluster-backup') | ternary( [{'name': item.name, 'enabled': True}], [{'name': item.name, 'enabled': item.enabled}])  }}"
+  loop:  "{{ lookup('list', components) }}"
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$")
+
+
+- name: Enable cluster backup operator
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
+    definition:
+      apiVersion: operator.open-cluster-management.io/v1
+      kind: MultiClusterHub
+      metadata:
+        name: multiclusterhub
+        namespace: open-cluster-management
+      spec:
+        overrides:
+          components: "{{ new_components  }}"
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$")
+
+

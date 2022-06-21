@@ -4,3 +4,12 @@
     state: present
     template:
       - path: "backup-schedule.yml"
+  when: MCH_VERSION | regex_search("^2\.4\.(.)$") 
+
+- name: Create openshift oadp operator
+  kubernetes.core.k8s:
+    context: "{{ HUB_CONTEXT }}"
+    state: present
+    template:
+      - path: "backup-schedule_2.5.x.yml"
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$") 

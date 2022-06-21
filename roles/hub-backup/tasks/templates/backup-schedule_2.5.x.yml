@@ -1,0 +1,9 @@
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: BackupSchedule
+metadata:
+  name: backup-schedule-acm
+  namespace: open-cluster-management-backup
+spec:
+  maxBackups: 10
+  veleroSchedule: 0 */8 * * *
+  veleroTtl: 72h

@@ -1,0 +1,10 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  become: false
+  vars_files:
+    - vars/vars-hub.yml
+  tasks:
+  - include_role: 
+      name: ./roles/import-managedcluster
+

@@ -1,2 +1,2 @@
-BUCKET: dario-test-two-four-two-five
-STORAGE_REGION: us-east-1
+BUCKET: <YOUR BUCKET NAME>
+STORAGE_REGION: <YOUR REGION NAME>

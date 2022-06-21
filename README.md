@@ -37,7 +37,49 @@ $ source ansible-env/bin/activate
 (ansible-env)$
 ```
 
-The `S3` bucket must be already created (in the ftuture we may want to create it in the `enable-backup` playbook).
+## Importing managed cluster
+
+Since restoring a manually imported managed cluster task is very similar to import a managed cluster, this set of ansible roles supply a way to import a cluster.
+
+```shell
+(ansible-env)$ cat vars-hub.yml
+HUB_CONTEXT: hub-1
+```
+
+```shell
+(ansible-env)$ oc config get-contexts
+CURRENT   NAME        CLUSTER                 AUTHINFO    NAMESPACE
+*         hub-1       hub-1-backup-imported   admin       
+          managed-1   managed-1               managed-1   default
+          managed-2   managed-2               managed-2   default
+```
+
+```shell
+(ansible-env)$ ansible-playbook import-cluster.yml -e MANAGED_CLUSTER_NAME=managed-1
+[.... skipped for brevrity ... ] 
+(ansible-env)$ ansible-playbook import-cluster.yml -e MANAGED_CLUSTER_NAME=managed-2
+[.... skipped for brevrity ... ] 
+```
+
+After the commands above your clusters should be imported and available
+
+```shell
+(ansible-env)$ oc get managedclusters
+NAME            HUB ACCEPTED   MANAGED CLUSTER URLS                                               JOINED   AVAILABLE   AGE
+local-cluster   true           https://api.hub-1-the-cluster-name.this-an.exmaple.com:6443        True     True        3d1h
+managed-1       true                                                                              True     True        51m
+managed-2       true                                                                              True     True        6m52s
+```
+
+
+# Configure backups
+
+```shell
+(ansible-env)$ cat vars-hub.yml
+HUB_CONTEXT: hub-1
+```
+
+The `S3` bucket will be created in case it's not already. 
 Obviously the `S3` must be the same for both `backup` and `restore`. the `vars/var-s3.yml` should contain the `bucket` and `region`.
 
 
@@ -64,9 +106,6 @@ AWS_SECRET_ACCESS_KEY: <Your aws secret key here>
 ```
 
 
-# Configure backups
-
-
 ```shell
 (ansible-env)$ cat var-backup.yml
 HUB_CONTEXT: hub-1
@@ -78,6 +117,37 @@ HUB_CONTEXT: hub-1
 ```
 
 ## Restore HUB
+
+```shell
+(ansible-env)$ cat vars-hub.yml
+HUB_CONTEXT: hub-1
+```
+
+The `S3` bucket must be already present and it should contain the backups.
+The `vars/var-s3.yml` should contain the `bucket` and `region`.
+
+
+```shell
+(ansible-env)$ cat vars/var-s3.yml
+BUCKET: <your s3 bucket>
+STORAGE_REGION: <your region>
+```
+
+The `S3` credentials should stay in the `ansible vault`. This approach is obviulsy simplistic and it should not be used in the production but at least it makes difficult to commit in git the `AWS` credentials.
+
+```shell
+(ansible-env)$  ansible-vault edit vault/aws.yml
+```
+
+```shell
+(ansible-env)$ echo "unbreakable vault password" > .vault-password-file
+```
+
+```shell
+(ansible-env)$  ansible-vault view vault/aws.yml --vault-password-file .vault-password-fie 
+AWS_ACCESS_KEY: <Your aws acces key>
+AWS_SECRET_ACCESS_KEY: <Your aws secret key here>
+```
 
 
 ```shell

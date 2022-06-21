@@ -5,7 +5,7 @@
   vars_files:
     - vault/aws.yml
     - vars/vars-s3.yml
-    - vars/vars-backup.yml
+    - vars/vars-hub.yml
   tasks:
   - name: collect Multi-Cluster-HUB version
     include_tasks: ./roles/tools/tasks/mch.yml
@@ -13,10 +13,11 @@
     set_fact:
       CREATE_S3_STORAGE: true
   - include_role:
-      name: ./roles/oadp-operator
-  - include_role:
-      name: ./roles/oadp-object-storage
+      name: ./roles/oadp-operator 
+    when: MCH_VERSION ==  "2.4.4" # 2.4.4 requested to create oadp-operator 
   - include_role:
       name: ./roles/cluster-backup-operator
+  - include_role:
+      name: ./roles/oadp-object-storage
   - name: enable Backups
     include_tasks: ./roles/hub-backup/tasks/enable.yml
