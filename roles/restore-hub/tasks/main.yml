@@ -13,7 +13,7 @@
     state: present
     template:
       - path: "restore-hub_2.4.4.yml"
-  when: MCH_VERSION ==  "2.4.4"
+  when: MCH_VERSION | regex_search("^2\.4\.(.)$")
 
 - name: Creating Restore CRD to trigger restoring when 2.5.0
   kubernetes.core.k8s:
@@ -21,7 +21,7 @@
     state: present
     template:
       - path: "restore-hub_2.5.0.yml"
-  when: MCH_VERSION ==  "2.5.0"
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$")"
 
 #TODO  detect when restore is over. In general it's faster than 20s. Need to speed-up this.
 - name: Let's pause 59s to let restore running
@@ -45,11 +45,11 @@
     loop_var: mc_item
   when: mc_item.status.conditions is defined  and "ManagedClusterAvailable" not in (mc_item.status.conditions | map(attribute='reason'))
 
-- name: re-import Kubernetes cluster 
+- name: re-import Kubernetes cluster
   include_tasks: ../roles/import-managedcluster/tasks/main.yml
   vars:
     MANAGED_CLUSTER_NAME: "{{ cluster_name }}"
   loop: "{{ mc_lists }}"
   loop_control:
     loop_var: cluster_name
-  when: mc_lists is defined 
+  when: mc_lists is defined

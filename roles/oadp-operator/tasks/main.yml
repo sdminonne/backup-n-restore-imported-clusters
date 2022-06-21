@@ -2,8 +2,8 @@
 
 - name:  "If it's 2.4.4 "
   include_tasks: ./2.4.4.yml
-  when: MCH_VERSION ==  "2.4.4"
+  when: MCH_VERSION | regex_search("^2\.4\.(.)$")
 
 - name: "If it's 2.5.0"
   include_tasks: ./2.5.0.yml
-  when: MCH_VERSION ==  "2.5.0"
+  when: MCH_VERSION | regex_search("^2\.5\.(.)$")

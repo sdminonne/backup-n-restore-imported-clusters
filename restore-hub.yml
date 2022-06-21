@@ -14,7 +14,7 @@
       CREATE_S3_STORAGE: false
   - include_role:
       name: ./roles/oadp-operator
-    when: MCH_VERSION ==  "2.4.4" # 2.4.4 requested to create oadp-operator 
+    when: MCH_VERSION | regex_search("^2\.4\.(.)$") # 2.4.4 requested to create oadp-operator
   - include_role:
       name: ./roles/cluster-backup-operator
   - include_role:
