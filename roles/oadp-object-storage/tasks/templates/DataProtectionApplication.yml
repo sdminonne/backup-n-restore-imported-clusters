@@ -4,6 +4,7 @@ metadata:
   name: dpa
   namespace: open-cluster-management-backup
 spec:
+  backupImages: false
   configuration:
     velero:
       defaultPlugins:
