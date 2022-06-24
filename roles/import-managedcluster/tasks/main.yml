@@ -6,6 +6,12 @@
     invalidate_cache: False
   register: api_status
 
+- name: Verify managed cluster connection
+  kubernetes.core.k8s_cluster_info:
+    context: "{{ MANAGED_CLUSTER_NAME }}"
+    invalidate_cache: False
+  register: api_status
+
 - name: Inject Managed Cluster CR {{ MANAGED_CLUSTER_NAME }}
   kubernetes.core.k8s:
     context: "{{ HUB_CONTEXT }}"
@@ -23,7 +29,7 @@
     namespace: "{{ MANAGED_CLUSTER_NAME }}"
   register: import_secret
 
-- name: Create crds import 
+- name: Create crds import
   ansible.builtin.tempfile:
     state: file
     suffix: crd_import
@@ -56,4 +62,3 @@
     state: present
     template:
       - path: "{{ import_import_tmp.path }}"
-
