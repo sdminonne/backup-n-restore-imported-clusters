@@ -55,10 +55,14 @@ CURRENT   NAME        CLUSTER                 AUTHINFO    NAMESPACE
 ```
 
 ```shell
+# This playbook execution makes the assumption that the name of the cluster imported in RH ACM is equal to the managed cluster context name
 (ansible-env)$ ansible-playbook import-cluster.yml -e MANAGED_CLUSTER_NAME=managed-1
-[.... skipped for brevrity ... ] 
-(ansible-env)$ ansible-playbook import-cluster.yml -e MANAGED_CLUSTER_NAME=managed-2
-[.... skipped for brevrity ... ] 
+[.... skipped for brevrity ... ]
+
+# This playbook execution allow to define a name(defined in the variable MANAGED_CLUSTER_NAME) for the imported managed cluster different by its cluster context name(defined in the variable MANAGED_CLUSTER_CONTEXT_NAME)
+# The variable MANAGED_CLUSTER_CONTEXT_NAME is optional
+(ansible-env)$ ansible-playbook import-cluster.yml -e MANAGED_CLUSTER_NAME=managed-2 -e MANAGED_CLUSTER_CONTEXT_NAME=cluster-context-managed-2
+[.... skipped for brevrity ... ]
 ```
 
 After the commands above your clusters should be imported and available
