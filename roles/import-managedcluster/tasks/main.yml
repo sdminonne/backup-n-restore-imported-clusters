@@ -1,4 +1,8 @@
 ---
+- name: Define MANAGED_CLUSTER_CONTEXT_NAME equal to MANAGED_CLUSTER_NAME if it is not provided by the user
+  set_fact:
+    MANAGED_CLUSTER_CONTEXT_NAME: "{{ MANAGED_CLUSTER_NAME }}"
+  when: MANAGED_CLUSTER_CONTEXT_NAME is not defined
 
 - name: Verify ACM Hub cluster connection
   kubernetes.core.k8s_cluster_info:
@@ -8,7 +12,7 @@
 
 - name: Verify managed cluster connection
   kubernetes.core.k8s_cluster_info:
-    context: "{{ MANAGED_CLUSTER_NAME }}"
+    context: "{{ MANAGED_CLUSTER_CONTEXT_NAME }}"
     invalidate_cache: False
   register: api_status
 
@@ -51,14 +55,14 @@
 
 - name: Inject import CRDs into {{ MANAGED_CLUSTER_NAME }}
   kubernetes.core.k8s:
-    context: "{{ MANAGED_CLUSTER_NAME }}"
+    context: "{{ MANAGED_CLUSTER_CONTEXT_NAME }}"
     state: present
     template:
       - path: "{{ crd_import_tmp.path }}"
 
 - name: Inject import command into {{ MANAGED_CLUSTER_NAME }}
   kubernetes.core.k8s:
-    context: "{{ MANAGED_CLUSTER_NAME }}"
+    context: "{{ MANAGED_CLUSTER_CONTEXT_NAME }}"
     state: present
     template:
       - path: "{{ import_import_tmp.path }}"
